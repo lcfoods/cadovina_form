@@ -1,4 +1,4 @@
-import { GoogleGenAI, Type, Schema } from "@google/genai";
+//import { GoogleGenAI, Type, Schema } from "@google/genai";
 import { Employee, Gender, EmployeeStatus } from "../types";
 
 // Initialize Gemini Client
