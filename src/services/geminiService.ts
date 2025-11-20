@@ -33,15 +33,15 @@ const employeeSchema: Schema = {
 
 export const generateFakeEmployee = async (): Promise<Employee | null> => {
   try {
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: "Generate a realistic JSON object for a Vietnamese employee in an HRM system. Include tax code and join date.",
-      config: {
-        responseMimeType: "application/json",
-        responseSchema: employeeSchema,
-        temperature: 0.7,
-      },
-    });
+    // const response = await ai.models.generateContent({
+    //   model: "gemini-2.5-flash",
+    //   contents: "Generate a realistic JSON object for a Vietnamese employee in an HRM system. Include tax code and join date.",
+    //   config: {
+    //     responseMimeType: "application/json",
+    //     responseSchema: employeeSchema,
+    //     temperature: 0.7,
+    //   },
+    // });
 
     if (response.text) {
       return JSON.parse(response.text) as Employee;
