@@ -6,7 +6,6 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "deploy": "wrangler deploy --assets=dist",
     "lint": "eslint .",
     "preview": "vite preview"
   },
