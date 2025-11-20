@@ -3,7 +3,7 @@ import { Employee, Gender, EmployeeStatus } from "../types";
 
 // Initialize Gemini Client
 // The API key must be provided in the environment variable API_KEY
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+//const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 const employeeSchema: Schema = {
   type: Type.OBJECT,
