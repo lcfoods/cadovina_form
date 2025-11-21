@@ -63,6 +63,19 @@ export const EmployeeModal: React.FC<EmployeeModalProps> = ({ isOpen, onClose })
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement | HTMLSelectElement>) => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    const form = e.currentTarget.form;
+    const index = Array.prototype.indexOf.call(form, e.currentTarget);
+    const next = form.elements[index + 1] as HTMLElement;
+    if (next && typeof next.focus === "function") {
+      next.focus();
+    }
+  }
+};
+
+
   const handleGenerateData = async () => {
     setIsGenerating(true);
     setErrors({}); // Clear errors on generate start
