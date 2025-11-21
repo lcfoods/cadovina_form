@@ -1,3 +1,5 @@
+import { GOOGLE_APPS_SCRIPT_URL } from "../config";
+
 import React, { useState, useEffect } from "react";
 import { Employee, Gender, EmployeeStatus, DepartmentOption, DEFAULT_EMPLOYEE } from "../types";
 import { XIcon, SparklesIcon, ChevronDownIcon, TrashIcon, ExclamationTriangleIcon } from "./Icons";
@@ -61,6 +63,19 @@ export const EmployeeModal: React.FC<EmployeeModalProps> = ({ isOpen, onClose })
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement | HTMLSelectElement>) => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    const form = e.currentTarget.form;
+    const index = Array.prototype.indexOf.call(form, e.currentTarget);
+    const next = form.elements[index + 1] as HTMLElement;
+    if (next && typeof next.focus === "function") {
+      next.focus();
+    }
+  }
+};
+
+
   const handleGenerateData = async () => {
     setIsGenerating(true);
     setErrors({}); // Clear errors on generate start
@@ -89,46 +104,68 @@ export const EmployeeModal: React.FC<EmployeeModalProps> = ({ isOpen, onClose })
     onClose();
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    // Validation Logic
-    const newErrors: Partial<Record<keyof Employee, boolean>> = {};
-    
-    // Required Fields
-    if (!formData.employeeCode.trim()) newErrors.employeeCode = true;
-    if (!formData.fullName.trim()) newErrors.fullName = true;
-    if (!formData.departmentId) newErrors.departmentId = true;
-    if (!formData.joinDate) newErrors.joinDate = true;
+ const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
 
-    // Phone Validation (Vietnamese format: 0 + 3/5/7/8/9 + 8 digits)
-    // Only validate if value is present
-    const vnPhoneRegex = /^(0)(3|5|7|8|9)([0-9]{8})$/;
-    if (formData.phoneNumber && !vnPhoneRegex.test(formData.phoneNumber)) {
-        newErrors.phoneNumber = true;
+  // Validation Logic
+  const newErrors: Partial<Record<keyof Employee, boolean>> = {};
+
+  if (!formData.employeeCode.trim()) newErrors.employeeCode = true;
+  if (!formData.fullName.trim()) newErrors.fullName = true;
+  if (!formData.departmentId) newErrors.departmentId = true;
+  if (!formData.joinDate) newErrors.joinDate = true;
+
+  const vnPhoneRegex = /^(0)(3|5|7|8|9)([0-9]{8})$/;
+  if (formData.phoneNumber && !vnPhoneRegex.test(formData.phoneNumber)) {
+    newErrors.phoneNumber = true;
+  }
+
+  if (Object.keys(newErrors).length > 0) {
+    setErrors(newErrors);
+
+    const hasGeneralErrors =
+      newErrors.employeeCode ||
+      newErrors.fullName ||
+      newErrors.departmentId ||
+      newErrors.joinDate;
+    const hasContactErrors = newErrors.phoneNumber;
+
+    if (hasGeneralErrors && activeTab !== "general") {
+      setActiveTab("general");
+    } else if (!hasGeneralErrors && hasContactErrors && activeTab !== "contact") {
+      setActiveTab("contact");
     }
 
-    if (Object.keys(newErrors).length > 0) {
-        setErrors(newErrors);
-        
-        // Switch logic: Prioritize General tab errors, then Contact tab errors
-        const hasGeneralErrors = newErrors.employeeCode || newErrors.fullName || newErrors.departmentId || newErrors.joinDate;
-        const hasContactErrors = newErrors.phoneNumber;
+    setNotification("Vui lòng kiểm tra lại dữ liệu!");
+    setTimeout(() => setNotification(null), 3000);
+    return;
+  }
 
-        if (hasGeneralErrors && activeTab !== 'general') {
-            setActiveTab('general');
-        } else if (!hasGeneralErrors && hasContactErrors && activeTab !== 'contact') {
-            setActiveTab('contact');
-        }
-        
-        setNotification("Vui lòng kiểm tra lại dữ liệu!");
-        setTimeout(() => setNotification(null), 3000);
-        return;
-    }
+  try {
+    // Gửi dữ liệu sang Google Apps Script
+    await fetch(GOOGLE_APPS_SCRIPT_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    });
 
-    alert(`Lưu thành công nhân viên: ${formData.fullName}`);
+    setNotification("Lưu thành công dữ liệu nhân viên! ✅");
+    setTimeout(() => setNotification(null), 3000);
+
+    // Nếu muốn reset form sau khi lưu:
+    // setFormData(DEFAULT_EMPLOYEE);
+
     onClose();
-  };
+  } catch (error) {
+    console.error("Error saving to Google Sheets:", error);
+    setNotification("Có lỗi khi lưu dữ liệu lên Google Sheet ❌");
+    setTimeout(() => setNotification(null), 4000);
+  }
+};
+
 
   if (!isOpen) return null;
 
