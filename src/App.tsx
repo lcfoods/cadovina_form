@@ -10,7 +10,7 @@ const App: React.FC = () => {
         <header className="bg-white h-12 shadow border-b border-gray-200 flex items-center px-4 z-10 relative">
             <div className="flex items-center gap-2 mr-8">
                  <div className="bg-[#0072bc] w-8 h-8 flex items-center justify-center text-white font-bold rounded-sm">F</div>
-                 <h1 className="text-lg font-bold text-[#0072bc] tracking-tight">Fast HRM Online</h1>
+                 <h1 className="text-lg font-bold text-[#c10000] tracking-tight">Cadovina</h1>
             </div>
             
             <nav className="flex space-x-1 text-sm font-medium text-gray-600 h-full items-center">
