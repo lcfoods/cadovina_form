@@ -337,6 +337,28 @@ export default function EmployeeModal({ isOpen, onClose }: EmployeeModalProps) {
             Lưu
           </button>
         </div>
+        <div className="bg-[#f0f2f5] px-4 py-2 border-t border-gray-300 flex justify-end gap-2 shrink-0">
+
+    {/* Đóng - CHỈ LÀ button, KHÔNG submit */}
+    <button
+        type="button"
+        onClick={onClose}
+        className="min-w-[80px] px-3 py-1.5 bg-white border border-gray-300 hover:bg-gray-100 rounded shadow-sm text-sm"
+    >
+        Đóng
+    </button>
+
+    {/* Lưu - ƯU TIÊN KHI ENTER */}
+    <button
+        type="submit"
+        onClick={handleSubmit}
+        className="min-w-[80px] px-3 py-1.5 bg-[#c10000] text-white hover:bg-[#a00000] rounded shadow-sm text-sm font-semibold"
+    >
+        Lưu
+    </button>
+
+</div>
+
       </form>
     </div>
   );
