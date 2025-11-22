@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { EmployeeModal } from "./components/EmployeeModal";
+import EmployeeModal from "./components/EmployeeModal";
 import { Employee } from "./types";
 
 const GOOGLE_SHEET_API =
