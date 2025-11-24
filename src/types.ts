@@ -1,60 +1,96 @@
-export enum Gender {
-  Male = "Nam",
-  Female = "Nữ",
-  Other = "Khác",
-}
 
 export enum EmployeeStatus {
-  Active = "Đang làm việc",
-  Resigned = "Đã nghỉ việc",
-  Maternity = "Nghỉ thai sản",
+  ACTIVE = 'Đang làm việc',
+  PROBATION = 'Thử việc',
+  RESIGNED = 'Đã nghỉ việc',
+  LEAVE = 'Nghỉ thai sản/ốm',
 }
 
-export interface Employee {
-  employeeCode: string;
+export enum Gender {
+  MALE = 'Nam',
+  FEMALE = 'Nữ',
+  OTHER = 'Khác',
+}
+
+// New Recruitment Types
+export enum RecruitmentStatus {
+  PENDING = 'Chờ phỏng vấn',
+  INTERVIEWED = 'Đã phỏng vấn',
+  PASSED = 'Đạt',
+  FAILED = 'Không đạt',
+  CONVERTED = 'Đã chuyển nhân viên', // Archived state
+}
+
+export interface Candidate {
+  id: string;
   fullName: string;
-  dateOfBirth: string; // YYYY-MM-DD
   gender: Gender;
-  departmentId: string;
-  position: string;
-  joinDate: string; // YYYY-MM-DD
-  status: EmployeeStatus;
-  identityNumber: string; // CMND/CCCD
-  identityDate: string;
-  identityPlace: string;
-  taxCode: string;
-  addressPermanent: string; // Thường trú
-  addressContact: string; // Tạm trú/Liên hệ
-  phoneNumber: string;
+  dob: string;
+  phone: string;
   email: string;
-  bankAccount: string;
-  bankName: string;
-  bankBranch: string;
+  identityCard: string; // CCCD
+  
+  // Address (Simplified for candidate, or full if AI extracted)
+  street?: string;
+  province?: string;
+  district?: string;
+  ward?: string;
+
+  appliedPosition: string; // Vị trí ứng tuyển
+  cvUrl?: string; // Link or Base64
+  interviewDate?: string;
+  status: RecruitmentStatus;
+  note?: string; // Ghi chú phỏng vấn/đánh giá
 }
 
-export interface DepartmentOption {
+export interface Department {
+  id: string;
+  name: string;
+  parentId?: string;
+}
+
+export interface Position {
   id: string;
   name: string;
 }
 
-export const DEFAULT_EMPLOYEE: Employee = {
-  employeeCode: "",
-  fullName: "",
-  dateOfBirth: "",
-  gender: Gender.Male,
-  departmentId: "",
-  position: "",
-  joinDate: "",
-  status: EmployeeStatus.Active,
-  identityNumber: "",
-  identityDate: "",
-  identityPlace: "",
-  taxCode: "",
-  addressPermanent: "",
-  addressContact: "",
-  phoneNumber: "",
-  email: "",
-  bankAccount: "",
-  bankName: "",
-  bankBranch: "",
-};
+export interface LocationItem {
+  id: string;
+  name: string;
+  parentId?: string; // District needs provinceId, Ward needs districtId
+}
+
+export interface Employee {
+  id: string;
+  employeeCode: string; // Mã NV
+  fullName: string;
+  gender: Gender;
+  dob: string; // Date string YYYY-MM-DD
+  phone: string;
+  email: string;
+  identityCard: string; // CCCD/CMND
+  issuedDate: string;
+  issuedPlace: string;
+  
+  // New Address Structure
+  street: string;
+  province: string; // Store Name for simplicity in this demo
+  district: string;
+  ward: string;
+  addressLevel: 2 | 3; // 2 cấp or 3 cấp
+
+  department: string;
+  position: string;
+  startDate: string;
+  resignationDate?: string; // Ngày nghỉ việc
+  salary: number;
+  status: EmployeeStatus;
+  avatarUrl?: string;
+}
+
+export interface DashboardStats {
+  totalEmployees: number;
+  newThisMonth: number;
+  departmentDistribution: { name: string; value: number }[];
+  genderDistribution: { name: string; value: number }[];
+}
